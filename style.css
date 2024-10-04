@@ -15,9 +15,10 @@
 
 .wraper{
     width: 100vw;
-    height: 100vh;
+    height: auto;
     color: var(--colorLight2);
     background-image: linear-gradient(160deg, #112d4e 0%, #3f72af 100%);
+    overflow: hidden;
 }
 
 h1{
@@ -159,6 +160,7 @@ h1{
     justify-content: center;
     align-items: center;
     margin-top: 2rem;
+    /* margin-bottom: 8rem; */
 }
 
 .parameter{
@@ -183,6 +185,7 @@ h1{
     .parameter{
         width: 80%;
     }
+    
 }
 
 .parameter img{
