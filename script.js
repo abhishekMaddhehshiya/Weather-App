@@ -50,6 +50,7 @@ const grantAccessContainer = document.querySelector(".grant-location-container")
 const searchForm = document.querySelector("[data-searchForm]");
 const loadingScreen = document.querySelector(".loading-container");
 const userInfoContainer = document.querySelector(".user-info-container");
+const errorContainer = document.querySelector(".error-Container");
 
 //initially variables need
 
@@ -66,12 +67,15 @@ function switchTab(newTab){
     oldTab.classList.add("current-tab");
 
     if(!searchForm.classList.contains("active")){
+      errorContainer.classList.remove("active");
       userInfoContainer.classList.remove("active");
       grantAccessContainer.classList.remove("active");
+      searchForm.reset();
       searchForm.classList.add("active");
     }
     else{
       searchForm.classList.remove("active");
+      errorContainer.classList.remove("active");
       userInfoContainer.classList.remove("active");
       getfromSessionStorage();
 
@@ -107,7 +111,7 @@ async function fetchUserWeatherInfo(coordinates){
 
 
   try{
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKEY}&units=matric`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKEY}&units=metric`);
     const data = await response.json();
     loadingScreen.classList.remove("active");
     userInfoContainer.classList.add("active");
@@ -115,7 +119,8 @@ async function fetchUserWeatherInfo(coordinates){
   }
   catch(err){
     loadingScreen.classList.remove("active");
-    alert("Error: 404")
+    userInfoContainer.classList.remove("active");
+    errorContainer.classList.add("active");
   }
 }
 
@@ -134,7 +139,7 @@ function renderWeatherInfo(weatherInfo){
   contryIcon.src = `https://flagcdn.com/144x108/${weatherInfo?.sys?.country.toLowerCase()}.png`;
   desc.innerText = weatherInfo?.weather?.[0]?.description;
   weatherIcon.src = `http://openweathermap.org/img/w/${weatherInfo?.weather?.[0]?.icon}.png`;
-  temp.innerText = (weatherInfo?.main?.temp - 273).toFixed(2) + " °C";
+  temp.innerText = (weatherInfo?.main?.temp).toFixed(2) + " °C";
   windSpeed.innerText = weatherInfo?.wind?.speed + "m/s";
   humidity.innerText = weatherInfo?.main?.humidity + "%";
   cloudiness.innerText = weatherInfo?.clouds?.all + "%";
@@ -181,17 +186,20 @@ searchForm.addEventListener("submit", (e)=>{
 async function fetchSearchWeatherInfo(city){
   loadingScreen.classList.add("active");
   userInfoContainer.classList.remove("active");
+  errorContainer.classList.remove("active")
   grantAccessContainer.classList.remove("active");
 
   try{
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKEY}&units=matric`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKEY}&units=metric`);
     const data = await response.json();
     loadingScreen.classList.remove("active");
     userInfoContainer.classList.add("active");
     renderWeatherInfo(data);
-  }
-  catch(err){
-    
-  }
+  } catch (err) {
+    loadingScreen.classList.remove("active");
+    userInfoContainer.classList.remove("active");
+    errorContainer.classList.add("active");
+    console.log("here i am")
+   }
 }
 
